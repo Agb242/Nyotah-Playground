@@ -1,0 +1,25 @@
+# Utiliser l'image de base Debian
+FROM debian:latest
+
+# Mettre à jour les dépôts et installer les dépendances nécessaires
+RUN apt update && \
+    apt install -y \
+    build-essential \
+    cmake \
+    git \
+    libjson-c-dev \
+    libwebsockets-dev \
+    bash
+
+# Cloner le dépôt ttyd depuis GitHub
+RUN git clone https://github.com/tsl0922/ttyd.git /ttyd
+
+# Construire ttyd à partir du code source
+WORKDIR /ttyd
+RUN mkdir build && cd build && cmake .. && make && make install
+
+# Exposer le port utilisé par ttyd
+EXPOSE 7681
+
+# Démarrer ttyd avec bash comme terminal
+CMD ["ttyd", "--writable", "bash"]

@@ -1,0 +1,17 @@
+
+body {
+    display: flex;
+    height: 100vh;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    justify-content: center;
+    align-items: center;
+}
+.choice-container {
+    text-align: center;
+}
+.choice-card {
+    width: 300px;
+    margin: 20px;
+    display: inline-block;
+}

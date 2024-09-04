@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Application Terminal</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <h1>Application Terminal</h1>
+        <div class="tabs">
+            <button class="active" onclick="showModule('module1')">Module 1</button>
+            <button onclick="showModule('module2')">Module 2</button>
+            <button onclick="showModule('module3')">Module 3</button>
+        </div>
+    </header>
+    <div class="panel-container">
+        <div class="panel-left">
+            <div id="module1" class="course-content">
+                <h3>Module 1: Introduction</h3>
+                <div class="command">
+                    <p>$ sudo apt update</p>
+                    <button onclick="copyCommand('$ sudo apt update')">Copier</button>
+                </div>
+                <div class="command">
+                    <p>$ sudo apt upgrade</p>
+                    <button onclick="copyCommand('$ sudo apt upgrade')">Copier</button>
+                </div>
+            </div>
+            <div id="module2" class="course-content" style="display:none;">
+                <h3>Module 2: Advanced Commands</h3>
+                <div class="command">
+                    <p>$ ls -la</p>
+                    <button onclick="copyCommand('$ ls -la')">Copier</button>
+                </div>
+                <div class="command">
+                    <p>$ top</p>
+                    <button onclick="copyCommand('$ top')">Copier</button>
+                </div>
+            </div>
+            <div id="module3" class="course-content" style="display:none;">
+                <h3>Module 3: Scripting</h3>
+                <div class="command">
+                    <p>$ nano script.sh</p>
+                    <button onclick="copyCommand('$ nano script.sh')">Copier</button>
+                </div>
+                <div class="command">
+                    <p>$ chmod +x script.sh</p>
+                    <button onclick="copyCommand('$ chmod +x script.sh')">Copier</button>
+                </div>
+            </div>
+        </div>
+        <div class="splitter" id="splitter"></div>
+        <div class="panel-right">
+            <div class="button-container">
+                <button class="start-button" onclick="startTerminal()">Démarrer le terminal</button>
+                <button class="quit-button" onclick="quitTerminal()">Quitter</button>
+            </div>
+            <div class="customize-options">
+                <h3>Options de personnalisation</h3>
+                <!-- Add customization options here -->
+                <button onclick="toggleFullscreen()">Plein écran</button>
+                <input type="color" id="colorPicker" onchange="changeColor()" title="Changer la couleur du terminal">
+                <input type="text" id="terminalName" placeholder="Nom du terminal" oninput="changeName()">
+            </div>
+            <div class="timer" id="timer">00:00:00</div>
+            <div class="terminal-container" id="terminal-container">
+                <!-- Terminal iframe will be inserted here -->
+            </div>
+        </div>
+    </div>
+    <script>
+        const splitter = document.getElementById('splitter');
+        let isResizing = false;
+
+        splitter.addEventListener('mousedown', function(e) {
+            isResizing = true;
+        });
+
+        document.addEventListener('mouseup', function() {
+            isResizing = false;
+        });
+
+        document.addEventListener('mousemove', function(e) {
+            if (!isResizing) return;
+            const leftPanel = document.querySelector('.panel-left');
+            const rightPanel = document.querySelector('.panel-right');
+            const newLeftWidth = e.clientX - leftPanel.getBoundingClientRect().left;
+            const newRightWidth = document.body.clientWidth - newLeftWidth - splitter.offsetWidth;
+            if (newLeftWidth >= 200 && newRightWidth >= 200) { // Minimum width
+                leftPanel.style.width = `${newLeftWidth}px`;
+                rightPanel.style.width = `${newRightWidth}px`;
+            }
+        });
+
+
+        function showModule(moduleId) {
+            document.querySelectorAll('.course-content').forEach(content => {
+                content.style.display = 'none';
+            });
+            document.getElementById(moduleId).style.display = 'block';
+            document.querySelectorAll('.tabs button').forEach(button => {
+                button.classList.remove('active');
+            });
+            document.querySelector(`.tabs button[onclick="showModule('${moduleId}')"]`).classList.add('active');
+        }
+
+        function copyCommand(command) {
+            navigator.clipboard.writeText(command).then(() => {
+                alert('Commande copiée dans le presse-papiers!');
+            });
+        }
+
+        function startTerminal() {
+            fetch('/launch-terminal')
+                .then(response => response.json())
+                .then(data => {
+                    const terminalContainer = document.getElementById('terminal-container');
+                    terminalContainer.innerHTML = `<iframe src="${data.url}" frameborder="0"></iframe>`;
+                })
+                .catch(error => console.error('Erreur lors du démarrage du terminal:', error));
+        }
+
+        function quitTerminal() {
+            fetch('/exit-lab')
+                .then(response => response.json())
+                .then(data => {
+                    alert(data.message);
+                    document.getElementById('terminal-container').innerHTML = '';
+                })
+                .catch(error => console.error('Erreur lors de la fermeture du lab:', error));
+        }
+
+        function updateTimer() {
+            const timerElement = document.getElementById('timer');
+            let startTime = new Date().getTime();
+
+            function formatTime(ms) {
+                const seconds = Math.floor(ms / 1000);
+                const hours = Math.floor(seconds / 3600);
+                const minutes = Math.floor((seconds % 3600) / 60);
+                const remainingSeconds = seconds % 60;
+                return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(remainingSeconds).padStart(2, '0')}`;
+            }
+
+            function tick() {
+                const elapsedTime = new Date().getTime() - startTime;
+                timerElement.textContent = formatTime(elapsedTime);
+                setTimeout(tick, 1000);
+            }
+
+            tick();
+        }
+
+        function toggleFullscreen() {
+            const terminalContainer = document.getElementById('terminal-container');
+            if (!document.fullscreenElement) {
+                terminalContainer.requestFullscreen().catch(err => {
+                    console.error(`Erreur lors du passage en mode plein écran: ${err.message}`);
+                });
+            } else {
+                document.exitFullscreen();
+            }
+        }
+
+        function changeColor() {
+            const colorPicker = document.getElementById('colorPicker');
+            const iframe = document.querySelector('#terminal-container iframe');
+            if (iframe) {
+                iframe.contentWindow.postMessage({ type: 'changeColor', color: colorPicker.value }, '*');
+            }
+        }
+
+        function changeName() {
+            const terminalName = document.getElementById('terminalName').value;
+            const iframe = document.querySelector('#terminal-container iframe');
+            if (iframe) {
+                iframe.contentWindow.postMessage({ type: 'changeName', name: terminalName }, '*');
+            }
+        }
+
+
+        updateTimer();
+    </script>
+</body>
+</html>

@@ -1,0 +1,182 @@
+/* styles.css */
+
+/* Réinitialisation des marges et des paddings */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f7f7f7;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background-color: #3a3f44;
+    color: #fff;
+    padding: 15px;
+    text-align: center;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+header h1 {
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+}
+
+.tabs {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.tabs button {
+    background-color: #2db4fd;
+    border: none;
+    color: white;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    font-weight: bold;
+}
+
+.tabs button.active {
+    background-color: #167F71 /* Vert pour l'onglet actif */
+}
+
+.tabs button:hover {
+    background-color: #fc7302; /* Changement de couleur au survol */
+}
+
+.panel-container {
+    display: flex;
+    width: 100%;
+    height: calc(100vh - 100px);
+    overflow: hidden;
+}
+
+.panel-left, .panel-right {
+    padding: 20px;
+    height: 100%;
+    overflow-y: auto;
+}
+
+.panel-left {
+    background-color: #ffffff;
+    width: 50%;
+    border-right: 2px solid #fc7302; /* Séparation orange */
+}
+
+.panel-right {
+    background-color: #f7f7f7;
+    width: 50%;
+}
+
+.splitter {
+    width: 5px;
+    background-color: #2db4fd; /* Bleu pour le splitter */
+    cursor: col-resize;
+}
+
+.course-content {
+    margin-bottom: 1.5rem;
+}
+
+.command {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.command p {
+    margin-right: 10px;
+    flex-grow: 1;
+    background-color: #fcf4e1; /* Fond clair pour les commandes */
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.command button {
+    background-color:#167F71; /* Vert */
+    border: none;
+    color: white;
+    padding: 0.5rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.command button:hover {
+    background-color: #fc7302; /* Orange au survol */
+}
+
+.button-container {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.start-button, .quit-button {
+    background-color: #2db4fd; /* Bleu */
+    border: none;
+    color: white;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.start-button:hover, .quit-button:hover {
+    background-color: #167F71; /* Vert */
+}
+
+.customize-options {
+    margin-bottom: 20px;
+    background-color: #ffffff;
+    padding: 15px;
+    border-radius: 5px;
+    border: 1px solid #fc7302; /* Bordure orange */
+}
+
+.customize-options button {
+    background-color: #2db4fd;
+    border: none;
+    color: white;
+    padding: 0.5rem 1rem;
+    margin-top: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.customize-options input {
+    margin-top: 10px;
+    width: 100%;
+    padding: 5px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.timer {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 15px;
+    color: #fc7302; /* Orange pour le texte du timer */
+}
+
+.terminal-container {
+    background-color: #333;
+    border-radius: 8px;
+    overflow: hidden;
+    height: 300px; /* Ajuster la hauteur selon les besoins */
+    border: 2px solid #fc7302; /* Bordure orange */
+}
+
+.terminal-container iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+}

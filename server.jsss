@@ -1,0 +1,55 @@
+const express = require('express');
+const { exec } = require('child_process');
+const app = express();
+const PORT = 3000;
+
+app.use(express.static('public'));
+
+app.get('/launch-terminal', (req, res) => {
+    const port = Math.floor(Math.random() * 20) + 7681; // Port aléatoire entre 7681 et 7700
+    const containerName = `okalobeShell-${port}`; // Nom du conteneur ttyd
+    exec(`docker run -d -p ${port}:7681 --name ${containerName} alexos242/ttyd`, (error, stdout, stderr) => {
+        if (error) {
+            console.error(`Erreur lors du lancement du conteneur: ${error}`);
+            return res.status(500).send('Erreur lors du lancement du conteneur');
+        }
+        console.log(`Conteneur lancé avec ID: ${stdout.trim()}`);
+        // Supprimer le conteneur après 2 heures
+        exec(`docker run -d --rm --name timeout-container --entrypoint "sh" alpine -c "sleep 7200; docker rm -f ${containerName}"`, (timeoutError, timeoutStdout, timeoutStderr) => {
+            if (timeoutError) {
+                console.error(`Erreur lors de la configuration de la suppression automatique: ${timeoutError}`);
+            } else {
+                console.log(`Configuration de la suppression automatique pour ${containerName}`);
+            }
+        });
+        res.json({ url: `http://localhost:${port}` });
+    });
+});
+
+app.get('/exit-lab', (req, res) => {
+    exec('docker ps -q --filter "name=okalobeShell-"', (error, stdout) => {
+        if (error) {
+            console.error(`Erreur lors de la suppression du conteneur: ${error}`);
+            return res.status(500).send('Erreur lors de la suppression du conteneur');
+        }
+        const containerIds = stdout.trim().split('\n');
+        if (containerIds.length) {
+            containerIds.forEach(containerId => {
+                exec(`docker rm -f ${containerId}`, (rmError) => {
+                    if (rmError) {
+                        console.error(`Erreur lors de la suppression du conteneur: ${rmError}`);
+                    } else {
+                        console.log(`Conteneur ${containerId} supprimé`);
+                    }
+                });
+            });
+            res.send({ message: 'Lab terminé et conteneurs supprimés.' });
+        } else {
+            res.send({ message: 'Aucun conteneur à supprimer.' });
+        }
+    });
+});
+
+app.listen(PORT, () => {
+    console.log(`Serveur en cours d'exécution sur le port ${PORT}`);
+});

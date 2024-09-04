@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Application Terminal</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        header {
+            background-color: #007bff;
+            color: white;
+            padding: 10px;
+            text-align: center;
+        }
+        .panel-container {
+            display: flex;
+            flex-grow: 1;
+        }
+        .panel-left, .panel-right {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        .panel-left {
+            background-color: #f8f9fa;
+            border-right: 1px solid #dee2e6;
+        }
+        .panel-right {
+            background-color: #ffffff;
+        }
+        .tabs {
+            display: flex;
+            flex-direction: column;
+        }
+        .tabs button {
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-bottom: 5px;
+        }
+        .tabs button.active {
+            background-color: #0056b3;
+        }
+        .splitter {
+            width: 5px;
+            background-color: #cccccc;
+            cursor: col-resize;
+        }
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        .button-container button {
+            padding: 10px;
+            border: none;
+            cursor: pointer;
+        }
+        .start-button {
+            background-color: #28a745;
+            color: white;
+        }
+        .quit-button {
+            background-color: #dc3545;
+            color: white;
+        }
+        .customize-options {
+            margin-top: 20px;
+        }
+        .timer {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #343a40;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Application Terminal</h1>
+    </header>
+    <div class="panel-container">
+        <div class="panel-left">
+            <div class="tabs">
+                <button class="active">Module 1</button>
+                <button>Module 2</button>
+                <button>Module 3</button>
+            </div>
+        </div>
+        <div class="splitter" id="splitter"></div>
+        <div class="panel-right">
+            <div class="button-container">
+                <button class="start-button" onclick="startTerminal()">Démarrer le terminal</button>
+                <button class="quit-button" onclick="quitTerminal()">Quitter</button>
+            </div>
+            <div class="customize-options">
+                <h3>Options de personnalisation</h3>
+                <!-- Add customization options here -->
+            </div>
+            <div class="timer" id="timer">00:00:00</div>
+        </div>
+    </div>
+    <script>
+        const splitter = document.getElementById('splitter');
+        let isResizing = false;
+
+        splitter.addEventListener('mousedown', function(e) {
+            isResizing = true;
+        });
+
+        document.addEventListener('mousemove', function(e) {
+            if (!isResizing) return;
+            const offsetRight = document.body.offsetWidth - (e.clientX - document.body.offsetLeft);
+            document.querySelector('.panel-left').style.width = `calc(100% - ${offsetRight}px)`;
+            document.querySelector('.panel-right').style.width = `${offsetRight}px`;
+        });
+
+        document.addEventListener('mouseup', function(e) {
+            isResizing = false;
+        });
+
+        function startTerminal() {
+            // Implement start terminal functionality
+        }
+
+        function quitTerminal() {
+            // Implement quit terminal functionality
+        }
+    </script>
+</body>
+</html>
